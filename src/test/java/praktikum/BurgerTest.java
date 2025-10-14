@@ -24,13 +24,13 @@ public class BurgerTest {
     private Bun mockBun;
 
     @Mock
-    private Ingredient mockIngredient0;
+    private Ingredient mockIngredientSauce;
 
     @Mock
-    private Ingredient mockIngredient1;
+    private Ingredient mockIngredientBun;
 
     @Mock
-    private Ingredient mockIngredient2;
+    private Ingredient mockIngredientFilling;
 
     private float bunPrice;
     private float expectedPrice;
@@ -49,9 +49,9 @@ public class BurgerTest {
 
         Mockito.when(mockBun.getPrice()).thenReturn(bunPrice);
 
-        Mockito.when(mockIngredient0.getPrice()).thenReturn(50f);
-        Mockito.when(mockIngredient1.getPrice()).thenReturn(50f);
-        Mockito.when(mockIngredient2.getPrice()).thenReturn(50f);
+        Mockito.when(mockIngredientSauce.getPrice()).thenReturn(50f);
+        Mockito.when(mockIngredientBun.getPrice()).thenReturn(50f);
+        Mockito.when(mockIngredientFilling.getPrice()).thenReturn(50f);
     }
 
     @Test
@@ -62,15 +62,15 @@ public class BurgerTest {
 
     @Test
     public void addIngredientTest() {
-        burger.addIngredient(mockIngredient0);
-        assertEquals("Некорректное состояние списка ингредиентов после вызова метода addIngredient()", List.of(mockIngredient0), burger.ingredients);
+        burger.addIngredient(mockIngredientSauce);
+        assertEquals("Некорректное состояние списка ингредиентов после вызова метода addIngredient()", List.of(mockIngredientSauce), burger.ingredients);
     }
 
     @Test
     public void removeIngredientTest() {
-        burger.addIngredient(mockIngredient0);
-        burger.addIngredient(mockIngredient1);
-        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredientSauce);
+        burger.addIngredient(mockIngredientBun);
+        burger.addIngredient(mockIngredientFilling);
         assertEquals("После добавления трёх ингредиентов размер списка должен быть равен 3", 3, burger.ingredients.size());
 
         burger.removeIngredient(1);
@@ -79,11 +79,11 @@ public class BurgerTest {
 
     @Test
     public void moveIngredientTest() {
-        burger.addIngredient(mockIngredient1);
-        burger.addIngredient(mockIngredient2);
+        burger.addIngredient(mockIngredientBun);
+        burger.addIngredient(mockIngredientFilling);
 
         burger.moveIngredient(0, 1);
-        assertEquals("Некорректное перемещение ингредиента между позициями", mockIngredient1, burger.ingredients.get(1));
+        assertEquals("Некорректное перемещение ингредиента между позициями", mockIngredientBun, burger.ingredients.get(1));
     }
 
     @Parameterized.Parameters(name = "Цена булочки {0}, Ожидаемая итоговая цена {1}, Количество ингредиентов {2}")
@@ -101,9 +101,9 @@ public class BurgerTest {
     public void getPriceTest() {
         burger.setBuns(mockBun);
 
-        if (ingredientCount >= 1) burger.addIngredient(mockIngredient0);
-        if (ingredientCount >= 2) burger.addIngredient(mockIngredient1);
-        if (ingredientCount >= 3) burger.addIngredient(mockIngredient2);
+        if (ingredientCount >= 1) burger.addIngredient(mockIngredientSauce);
+        if (ingredientCount >= 2) burger.addIngredient(mockIngredientBun);
+        if (ingredientCount >= 3) burger.addIngredient(mockIngredientFilling);
 
         assertEquals("Неверный расчет цены для булочки" + bunPrice + " и" + ingredientCount + " ингредиентов", expectedPrice, burger.getPrice(), 0.01f);
     }
@@ -111,17 +111,17 @@ public class BurgerTest {
     @Test
     public void getReceiptTest() {
         burger.setBuns(mockBun);
-        burger.addIngredient(mockIngredient0);
-        burger.addIngredient(mockIngredient1);
+        burger.addIngredient(mockIngredientSauce);
+        burger.addIngredient(mockIngredientBun);
 
         Mockito.when(mockBun.getName()).thenReturn("Space bun");
         Mockito.when(mockBun.getPrice()).thenReturn(100.0f);
-        Mockito.when(mockIngredient0.getName()).thenReturn("Ingredient0");
-        Mockito.when(mockIngredient1.getName()).thenReturn("Ingredient1");
-        Mockito.when(mockIngredient0.getType()).thenReturn(IngredientType.FILLING);
-        Mockito.when(mockIngredient1.getType()).thenReturn(IngredientType.SAUCE);
-        Mockito.when(mockIngredient0.getPrice()).thenReturn(150.0f);
-        Mockito.when(mockIngredient1.getPrice()).thenReturn(50.0f);
+        Mockito.when(mockIngredientSauce.getName()).thenReturn("Ingredient0");
+        Mockito.when(mockIngredientBun.getName()).thenReturn("Ingredient1");
+        Mockito.when(mockIngredientSauce.getType()).thenReturn(IngredientType.FILLING);
+        Mockito.when(mockIngredientBun.getType()).thenReturn(IngredientType.SAUCE);
+        Mockito.when(mockIngredientSauce.getPrice()).thenReturn(150.0f);
+        Mockito.when(mockIngredientBun.getPrice()).thenReturn(50.0f);
 
         String expectedReceipt = "(==== Space bun ====)\r\n" +
                 "= filling Ingredient0 =\r\n" +
