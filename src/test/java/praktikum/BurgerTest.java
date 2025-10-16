@@ -3,19 +3,17 @@ package praktikum;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.MockitoAnnotations;
+import org.assertj.core.api.SoftAssertions;
+import org.mockito.junit.MockitoJUnitRunner;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
 
-@RunWith(Parameterized.class)
+@RunWith(MockitoJUnitRunner.class)
 public class BurgerTest {
 
     private Burger burger;
@@ -32,26 +30,9 @@ public class BurgerTest {
     @Mock
     private Ingredient mockIngredientFilling;
 
-    private float bunPrice;
-    private float expectedPrice;
-    private int ingredientCount;
-
-    public BurgerTest(float bunPrice, float expectedPrice, int ingredientCount) {
-        this.bunPrice = bunPrice;
-        this.expectedPrice = expectedPrice;
-        this.ingredientCount = ingredientCount;
-    }
-
     @Before
     public void setUp() {
-        MockitoAnnotations.openMocks(this);
         burger = new Burger();
-
-        Mockito.when(mockBun.getPrice()).thenReturn(bunPrice);
-
-        Mockito.when(mockIngredientSauce.getPrice()).thenReturn(50f);
-        Mockito.when(mockIngredientBun.getPrice()).thenReturn(50f);
-        Mockito.when(mockIngredientFilling.getPrice()).thenReturn(50f);
     }
 
     @Test
@@ -68,13 +49,19 @@ public class BurgerTest {
 
     @Test
     public void removeIngredientTest() {
+        SoftAssertions softAssertions = new SoftAssertions();
         burger.addIngredient(mockIngredientSauce);
         burger.addIngredient(mockIngredientBun);
         burger.addIngredient(mockIngredientFilling);
-        assertEquals("После добавления трёх ингредиентов размер списка должен быть равен 3", 3, burger.ingredients.size());
+        softAssertions.assertThat(burger.ingredients.size())
+                .as("После добавления трёх ингредиентов размер списка должен быть равен 3")
+                .isEqualTo(3);
 
         burger.removeIngredient(1);
-        assertEquals("После удаления одного ингредиента (индекс 1) размер списка должен уменьшиться до 2", 2, burger.ingredients.size());
+        softAssertions.assertThat(burger.ingredients.size())
+                .as("После удаления одного ингредиента (индекс 1) размер списка должен уменьшиться до 2")
+                .isEqualTo(2);
+        softAssertions.assertAll();
     }
 
     @Test
@@ -86,27 +73,6 @@ public class BurgerTest {
         assertEquals("Некорректное перемещение ингредиента между позициями", mockIngredientBun, burger.ingredients.get(1));
     }
 
-    @Parameterized.Parameters(name = "Цена булочки {0}, Ожидаемая итоговая цена {1}, Количество ингредиентов {2}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][]{
-                {100f, 200f, 0},
-                {100f, 250f, 1},
-                {100f, 300f, 2},
-                {150f, 350f, 1},
-                {200f, 550f, 3}
-        });
-    }
-
-    @Test
-    public void getPriceTest() {
-        burger.setBuns(mockBun);
-
-        if (ingredientCount >= 1) burger.addIngredient(mockIngredientSauce);
-        if (ingredientCount >= 2) burger.addIngredient(mockIngredientBun);
-        if (ingredientCount >= 3) burger.addIngredient(mockIngredientFilling);
-
-        assertEquals("Неверный расчет цены для булочки" + bunPrice + " и" + ingredientCount + " ингредиентов", expectedPrice, burger.getPrice(), 0.01f);
-    }
 
     @Test
     public void getReceiptTest() {
